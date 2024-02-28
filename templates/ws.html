@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+    <!-- Add Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-8">
+    <h1 class="text-2xl font-bold mb-4">WebSocket Chat</h1>
+    <p class="mb-4">Your Client ID: {{ client_id }}</p>
+    <div class="mb-4">
+        <textarea id="output" rows="10" cols="50" class="w-full p-2" readonly></textarea>
+    </div>
+    <div class="flex mb-4">
+        <input type="text" id="message" placeholder="Type your message..." class="flex-grow p-2 mr-2 border rounded focus:outline-none focus:ring focus:border-blue-300">
+        <button onclick="sendMessage()" class="p-2 bg-blue-500 text-white rounded">Send</button>
+    </div>
+
+    <script>
+        const ws = new WebSocket(`ws://${window.location.host}/ws/{{ client_id }}`);
+
+        ws.onmessage = (event) => {
+            const output = document.getElementById("output");
+            output.value += event.data + "\n";
+        };
+
+        function sendMessage() {
+            const messageInput = document.getElementById("message");
+            const message = messageInput.value.trim();
+            if (message !== "") {
+                ws.send(message);
+                messageInput.value = "";
+            }
+        }
+    </script>
+</body>
+</html>
